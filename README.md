@@ -43,5 +43,6 @@ El algoritmo LogicCheck funciona como un detective inteligente que busca una com
 
 2.Poda (Ahorra tiempo): Después de cada paso, revisa las reglas. Si ve que una regla ya se rompió y es imposible de arreglar, corta ese camino para no perder tiempo explorándolo.
 
-3.Retrocede (Backtrack): Al darse cuenta de que ese camino no tiene salida, da un paso atrás, borra su última decisión e intenta con la otra opción
+3.Retrocede (Backtrack): Al darse cuenta de que ese camino no tiene salida, da un paso atrás, borra su última decisión e intenta con la otra opción.
+
 4.Termina con éxito o fracaso: Si logra asignar valores a todas las variables sin romper ninguna regla, devuelve la solución (Satisfacible). Si prueba todas las combinaciones posibles dando pasos hacia atrás y ninguna funciona, concluye que no hay salida (Insatisfacible).
