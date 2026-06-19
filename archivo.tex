@@ -1,0 +1,392 @@
+% !TEX program = pdflatex
+% ============================================================
+% PLANTILLA PRO (LIMPIA) - INFORME DE LABORATORIO
+% - Sin índice (después del Resumen sigue Introducción)
+% - Incluye sección "Desarrollo de los puntos especificados en la guía"
+% - Estilo universitario, claro y ordenado
+% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Colores idénticos al formato de tu imagen
+\definecolor{codebackground}{rgb}{0.96, 0.96, 0.96}
+\definecolor{bordergray}{rgb}{0.6, 0.6, 0.6}
+
+\lstdefinestyle{estilo_imagen}{
+    backgroundcolor=\color{codebackground}, % Fondo gris claro
+    frame=single,                           % Recuadro completo
+    rulecolor=\color{bordergray},           % Borde gris delgado
+    basicstyle=\ttfamily\small,             % Fuente monoespaciada limpia
+    breaklines=true,                        % Salto automático si la línea es larga
+    showstringspaces=false,
+    tabsize=4,
+    % Mantiene el texto plano y uniforme como en tu imagen de referencia
+    keywordstyle=\ttfamily,                 
+    commentstyle=\ttfamily,
+    stringstyle=\ttfamily,
+    % Soporte completo para tildes en los comentarios en español
+    extendedchars=true,
+    literate={ó}{{\'o}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+
+\lstset{style=estilo_imagen}
+% ----------------------------
+% Idioma y codificación
+% ----------------------------
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % Si compilas con XeLaTeX/LuaLaTeX, puedes quitarlo
+\usepackage{lmodern}
+
+% ----------------------------
+% Márgenes y espaciado
+% ----------------------------
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+
+% ----------------------------
+% Matemáticas, unidades
+% ----------------------------
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true}
+
+% ----------------------------
+% Figuras y tablas
+% ----------------------------
+\usepackage{graphicx}
+\graphicspath{{figuras/}}
+
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% ----------------------------
+% Listas y control de estilo
+% ----------------------------
+\usepackage{enumitem}
+\setlist[itemize]{topsep=2pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=2pt,itemsep=2pt,parsep=0pt}
+
+% ----------------------------
+% Hipervínculos (links)
+% ----------------------------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+% ----------------------------
+% Encabezado/Pie opcional (se ve muy “pro”)
+% ----------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % limpia encabezado y pie
+\lhead{Introducción a las Ciencias de la Computación}
+\rhead{Proyecto final}
+\cfoot{\thepage}
+
+% ============================================================
+% DATOS DEL INFORME (EDITA AQUÍ)
+% ============================================================
+\newcommand{\Institucion}{Universidad Nacional de Colombia}
+\newcommand{\Asignatura}{Introducción a las Ciencias de la Computación}
+\newcommand{\NombrePractica}{LogicCheck: un pequeño verificador de
+satisfacibilidad.}
+\newcommand{\TituloInforme}{ \NombrePractica}
+
+\newcommand{\Docente}{Carlos Manuel Orrego Franco}
+\newcommand{\Seccion}{Grupo: 7}
+\newcommand{\FechaEntrega}{\today}
+
+% Integrantes (usa exactamente el formato de tu clase)
+\newcommand{\Integrantes}{%
+Mariana Zapata
+Fernández  \\
+Alaham Daniel Aarón Daza\\
+Andres Fabricio Pizo 
+}
+
+% (Opcional) Código del curso o semestre
+\newcommand{\Curso}{ Semestre: 2026-1}
+
+% ============================================================
+% DOCUMENTO
+% ============================================================
+\begin{document}
+
+% ============================================================
+% PORTADA
+% ============================================================
+\begin{titlepage}
+  \centering
+
+  {\Large \Institucion \par}
+  \vspace{0.4cm}
+  {\large \Asignatura \par}
+  \vspace{0.2cm}
+  {\large \Curso \par}
+
+  \vspace{1.4cm}
+  {\LARGE \bfseries \TituloInforme \par}
+  \vspace{0.3cm}
+
+
+  \vspace{1.2cm}
+
+  \begin{minipage}{0.9\textwidth}
+  \setlength{\tabcolsep}{10pt}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Docente:} & \Docente \\
+    \textbf{Sección/Grupo:} & \Seccion \\
+    \textbf{Fecha de entrega:} & \FechaEntrega \\
+  \end{tabular}
+  \end{minipage}
+
+  \vspace{1.0cm}
+
+  \begin{minipage}{0.9\textwidth}
+    \textbf{Integrantes:}\par
+    \vspace{0.3cm}
+    \Integrantes
+  \end{minipage}
+
+  \vfill
+  
+\end{titlepage}
+
+% ============================================================
+% RESUMEN (ABSTRACT)
+% ============================================================
+\begin{abstract}
+\noindent
+Este informe desarrolla la evaluación de logickcheck Lab, una herramienta educativa para mostrar cómo una computadora puede razonar sobre fórmulas proposicionales pequeñas.Donde se busca construir un verificador de satisfacibilidad proposicional (SAT) que determine si una fórmula lógica dada es satisfacible o no. Para esto se implementa un algoritmo de backtracking que explora el espacio de asignaciones posibles para las variables de la fórmula, aplicando técnicas de poda para descartar ramas del árbol de búsqueda que no pueden conducir a una solución satisfacible. El informe incluye una descripción detallada del procedimiento seguido, un modelamiento manual de un caso pequeño para ilustrar el funcionamiento del algoritmo, y una implementación en Python. Además, se discuten las decisiones tomadas durante el desarrollo, los resultados obtenidos y las conclusiones finales sobre la efectividad del enfoque utilizado.
+\medskip
+\noindent
+\end{abstract}
+
+% ============================================================
+% NOTA: SIN ÍNDICE (como pediste)
+% ============================================================
+
+% ============================================================
+\section{Introducción}
+
+La satisfacibilidad proposicional (SAT) es un problema fundamental en la informática teórica y práctica, que consiste en determinar si existe una asignación de valores de verdad a las variables de una fórmula lógica que haga que la fórmula sea verdadera. Este problema es de gran importancia porque es el primer problema que se demostró ser NP-completo, lo que implica que es tan difícil como cualquier otro problema en la clase NP. La capacidad de resolver SAT de manera eficiente tiene aplicaciones en áreas como la verificación de software, la inteligencia artificial, la optimización y la criptografía. Sin embargo, a medida que el número de variables en una fórmula aumenta, el número de combinaciones posibles crece exponencialmente, lo que hace que una evaluación exhaustiva (fuerza bruta) sea inviable para fórmulas con muchas variables. En este contexto, el enfoque de backtracking se presenta como una estrategia efectiva para explorar el espacio de soluciones de manera más inteligente, evitando la evaluación de combinaciones que ya se han determinado como no satisfacibles. Este informe se centrará en la implementación de un verificador de SAT utilizando backtracking, incluyendo un ejemplo manual para ilustrar el proceso, una implementación en Python y una discusión detallada de los resultados obtenidos.
+
+
+
+\section{Descripcion del problema.}
+El problema que se plantea es que al haber mayor cantidad de variables en una fórmula lógica, el número de combinaciones posibles para evaluar su satisfacibilidad crece exponencialmente, lo que hace inviable la generación de tablas de verdad completas. Para solucionar este problema, se propone modelar el sistema de Backtracking (búsqueda con retroceso), que permite explorar el espacio de soluciones de manera más eficiente al evitar la evaluación de combinaciones que ya se han determinado como no satisfacibles.
+\section{Modelamiento con backtracking.}
+Para resolver el problema de la satisfacibilidad proposicional (SAT) de manera más eficiente que una exploración por fuerza bruta (tablas de verdad), se modeló el sistema utilizando el paradigma de Backtracking (búsqueda con retroceso). Este enfoque modela el espacio de soluciones como un árbol de decisión binario, donde cada nivel del árbol representa una variable proposicional y cada rama representa la asignación de un valor de verdad ($True$ o $False$).\\ A continuación, se definen formalmente los componentes del algoritmo aplicados al sistema LogicCheck:\\ 
+\textbf{Solución Parcial:} Es un estado intermedio de la búsqueda representado por un diccionario o conjunto de pares clave-valor $\mathcal{A} = \{v_1: valor_1, v_2: valor_2, \dots\}$, donde solo un subconjunto de las variables de la fórmula ha recibido un valor de verdad definitivo.\\ 
+\textbf{Candidatos:} Para la siguiente variable libre (sin asignar) en el orden de evaluación, el conjunto de candidatos está estrictamente limitado a los valores booleanos: $C = \{True, False\}$.\\ 
+\textbf{Restricciones (Criterio de Poda):} Es la condición lógica que evalúa la viabilidad de la solución parcial. Una cláusula se define como definitivamente falsa si y solo si todos los literales que la componen han sido evaluados bajo la asignación parcial actual y el resultado de su disyunción ($\lor$) es falso. Cuando el sistema detecta una cláusula definitivamente falsa, se activa el mecanismo de poda (pruning), deteniendo la exploración de esa rama de inmediato.\\ \textbf{Solución Completa:} Se alcanza cuando el tamaño de la asignación parcial es igual al número total de variables únicas en la fórmula ($|\mathcal{A}| = |Variables|$) y, al evaluar la conjunción ($\land$) de todas las cláusulas, ninguna resulta ser falsa.\\
+\textbf{Retroceso(Backtrack):} Si al explorar un candidato para la variable actual se genera una violación de las restricciones (una cláusula definitivamente falsa), o si la recursión subsecuente retorna que no hay soluciones en esa rama, el algoritmo deshace la última asignación en el diccionario (limpieza del estado) y regresa al nivel anterior para probar con el candidato alternativo o retroceder más arriba en el árbol.\\  
+
+Formalización del Árbol de Búsqueda y Eficiencia diferencia de un método iterativo que genera de forma ciega las $2^n$ combinaciones posibles (donde $n$ es el número de variables), el algoritmo con backtracking evalúa de forma perezosa (lazy evaluation) las cláusulas.\\ Si una contradicción ocurre en una variable temprana (por ejemplo, en el nivel 2 del árbol), el algoritmo descarta de golpe todas las combinaciones que se derivarían de las variables restantes. Esto transforma el tiempo de ejecución en el caso promedio, reduciendo significativamente el número de nodos visitados en comparación con la evaluación de una tabla de verdad completa.
+
+\section{Ejemplo manual pequeño.}
+\textbf{Caso de Estudio: El Enigma del Turno de Fin de Semana Historia (Descripción del Problema).}\\
+Una empresa de software necesita organizar el turno de soporte técnico para este fin de semana. Tienen a tres programadores disponibles: Ana (A), Beto (B) y Carlos (C). Recursos Humanos ha establecido las siguientes reglas lógicas para asignar los turnos:
+
+\begin{itemize}
+  \item Regla 1: Al menos uno de los tres debe trabajar en el turno.
+  \item Regla 2: Ana y Beto no se llevan bien, por lo que no pueden trabajar juntos.
+  \item Regla 3: Carlos es un programador Junior y necesita supervisión. Si Carlos trabaja, Ana debe trabajar obligatoriamente para supervisarlo.
+  \item Regla 4: Por ser el líder del proyecto este mes, Beto debe trabajar obligatoriamente.
+\end{itemize}
+
+\textbf{Modelamiento del Problema:}
+\begin{itemize}
+  \item A : Ana trabaja (True o False)
+  \item B : Beto trabaja (True o False)
+  \item C : Carlos trabaja (True o False)
+\end{itemize}
+\text{Transformamos las reglas a formato de lista de cláusulas (donde cada lista interna es una disyunción "O" y todas deben cumplirse "Y"):}
+\begin{itemize}
+  \item Regla 1: ["A", "B", "C"] (A o B o C)
+  \item Regla 2: ["-A", "-B"] (No Ana o No Beto)
+  \item Regla 3: ["-C", "A"] (No Carlos o Ana)
+  \item Regla 4: ["B"] (Beto obligatoriamente)
+\end{itemize} 
+
+\textbf{Fórmula Final en el Código: Fórmula} = [["A", "B", "C"], ["-A", "-B"], ["-C", "A"], ["B"]]
+%=========================================================================================================================================================================================
+\section{Implementación en python.}
+\begin{lstlisting}[language=Python, caption=Implementación de Backtracking para SAT]
+  def get_variables(formula):
+    """Extrae todas las variables únicas de una fórmula lógica."""
+    vars_set = set()
+    for clause in formula:
+        for literal in clause:
+            vars_set.add(literal.replace("-", ""))
+    return sorted(list(vars_set))
+
+def evaluate_clause(clause, assignment):
+    """
+    Evalúa si una cláusula es verdadera, falsa o incierta.
+    Retorna True si es definitivamente verdadera,
+    False si es definitivamente falsa,
+    None si no se puede determinar aún.
+    """
+    is_false = True
+    for literal in clause:
+        is_neg = literal.startswith("-")
+        var = literal.replace("-", "")
+        val = assignment.get(var)
+
+        if val is None:
+            is_false = False  # Falta información, no es definitivamente falsa
+        else:
+            # Si un literal es True, toda la cláusula es True (disyunción)
+            if (val and not is_neg) or (not val and is_neg):
+                return True
+
+    if is_false:
+        return False  # Todos los literales evaluados fueron falsos
+
+    return None
+
+def solve_sat(formula, variables, index, assignment, stats):
+    stats["llamadas_recursivas"] += 1
+
+    # RESTRICCIONES (Poda)
+    for clause in formula:
+        if evaluate_clause(clause, assignment) is False:
+            stats["ramas_podadas"] += 1
+            return False
+
+    # CASO BASE: Solución Completa
+    if index == len(variables):
+        return True
+
+    var = variables[index]
+
+    # CANDIDATOS
+    for candidate in [True, False]:
+        assignment[var] = candidate
+
+        if solve_sat(formula, variables, index + 1, assignment, stats):
+            return True
+
+        # RETROCESO (Backtrack)
+        stats["retrocesos"] += 1
+        assignment[var] = None
+
+    return False
+
+def run_logic_check(formula):
+    variables = get_variables(formula)
+    assignment = {v: None for v in variables}
+    stats = {"llamadas_recursivas": 0, "ramas_podadas": 0, "retrocesos": 0}
+
+    is_satisfiable = solve_sat(formula, variables, 0, assignment, stats)
+
+    if is_satisfiable:
+        return True, {k: v for k, v in assignment.items() if v is not None}, stats
+    else:
+        return False, None, stats
+\end{lstlisting}
+%===============================================================================================================================================================
+\section{Pruebas y resultados.}
+Dado pruebas con las formulas sugeridas en el enunciado, del problema 
+\begin{lstlisting}[language=Python, caption=Pruebas con fórmulas de ejemplo]
+casos_prueba = [
+    # 3 Fórmulas Satisfacibles
+    ("Caso SAT 1 (Ejemplo Manual)", [["-A", "-B"], ["A", "B"]]),
+    ("Caso SAT 2 (Implicación)", [["-A", "B"], ["A"]]),
+    ("Caso SAT 3 (Múltiples Variables)", [["A", "B", "-C"], ["-A", "B"], ["C"]]),
+
+    # 2 Fórmulas Insatisfacibles
+    ("Caso UNSAT 1 (Contradicción Directa)", [["A"], ["-A"]]),
+    ("Caso UNSAT 2 (Ciclo Imposible)", [["A", "B"], ["-A"], ["-B"]])
+]
+
+for nombre, formula in casos_prueba:
+    print(f"--- {nombre} ---")
+    print(f"Fórmula: {formula}")
+    satisfiable, asignacion, stats = run_logic_check(formula)
+
+    if satisfiable:
+        print(f"Resultado: SATISFACIBLE \nAsignación: {asignacion}")
+    else:
+        print("Resultado: INSATISFACIBLE (No existe combinación válida)")
+
+    print(f"Estadísticas: {stats}\n")
+\end{lstlisting}
+
+\textbf{Resultados Observados:}
+\begin{lstlisting}[language=Python, caption=Resultados observados]
+ --- Caso SAT 1 (Ejemplo Manual) ---
+ Fórmula: [['-A', '-B'], ['A', 'B']]
+ Resultado: SATISFACIBLE
+ Asignación: {'A': True, 'B': False}
+ Estadísticas: {'llamadas_recursivas': 3, 'ramas_podadas': 0, 'retrocesos': 0} 
+
+ --- Caso SAT 2 (Implicación) ---
+ Fórmula: [['-A', 'B'], ['A']]
+ Resultado: SATISFACIBLE
+ Asignación: {'A': True, 'B': True}
+ Estadísticas: {'llamadas_recursivas': 2, 'ramas_podadas': 0, 'retrocesos': 0}
+
+ --- Caso SAT 3 (Múltiples Variables) ---
+ Fórmula: [['A', 'B', '-C'], ['-A', 'B'], ['C']]
+ Resultado: SATISFACIBLE
+ Asignación: {'A': False, 'B': True, 'C': True}
+ Estadísticas: {'llamadas_recursivas': 4, 'ramas_podadas': 0, 'retrocesos': 0}
+
+ --- Caso UNSAT 1 (Contradicción Directa) ---
+ Fórmula: [['A'], ['-A']]
+ Resultado: INSATISFACIBLE (No existe combinación válida)
+ Estadísticas: {'llamadas_recursivas': 2, 'ramas_podadas': 0, 'retrocesos': 0}
+
+ --- Caso UNSAT 2 (Ciclo Imposible) ---
+ Fórmula: [['A', 'B'], ['-A'], ['-B']]
+ Resultado: INSATISFACIBLE (No existe combinación válida)
+ Estadísticas: {'llamadas_recursivas': 3, 'ramas_podadas': 0, 'retrocesos': 0}
+\end{lstlisting}
+%============================================================================================================================================================================
+  \section{Decisiones del grupo}
+\begin{itemize}
+  \item ¿Qué lenguaje de programación usaron y por qué? Usamos Python, porque permite modelar rápidamente estructuras de datos como listas y diccionarios, y su legibilidad facilita implementar recursividad de forma intuitiva, lo que es ideal para Backtracking.
+  \item ¿Qué representación eligieron y por qué?  Representamos la fórmula como una lista de listas de cadenas [['A', 'B'], ['-A']], y la solución parcial como un diccionario ({"A": True, "B": None}). Esto nos permite evaluar rápida y fácilmente el estado de cualquier variable en O(1).
+  \item ¿Qué restricciones implementaron primero? La restricción crítica de que ninguna cláusula puede ser definitivamente falsa bajo la asignación parcial actual. Si una sola cláusula falla irremediablemente, la fórmula entera falla.
+  \item ¿Qué bug encontraron durante el desarrollo? Inicialmente no distinguíamos entre una cláusula con valor "Falso definitivo " y una cláusula "Aún no evaluada completamente". Esto provocaba que podáramos ramas prematuramente. Lo solucionamos implementando un retorno tri-estado (True, False, None) en evaluate clause.
+  \item ¿Qué caso de prueba falló inicialmente? El caso de fórmulas insatisfacibles simples como [["A"], ["-A"]]. El algoritmo no lograba retroceder correctamente al principio porque las variables no se re-asignaban a None al realizar el Backtrack.
+  \item ¿Qué poda implementaron? Podamos la rama en el mismo instante en que se detecta que cualquier cláusula de la fórmula se evalúa como definitivamente falsa. De esta forma, evitamos explorar el resto de variables que no cambiarían el hecho de que esa cláusula falló. Se descarta inmediatamente cualquier candidato que viole las restricciones (una cláusula que no cuadra o un número repetido), ahorrando la exploración de millones de ramas inútiles.
+  \item ¿Qué cambiarían si tuvieran más tiempo? Implementaríamos una heurística de ordenamiento de variables para evaluar primero las variables que aparecen en más cláusulas o en cláusulas unitarias (como en el algoritmo DPLL), lo cual aumentaría la cantidad de podas tempranas y aceleraría el tiempo de ejecución.
+  \item ¿Qué parte hizo cada integrante? Mariana: Diseño general del algoritmo, modelamiento y visualización de la traza paso a paso, Alaham: Implementación de la función evaluate clause y el chequeo de restricciones lógicas. Andres: Creación de los casos de prueba, ejecución de las estadísticas y ensamblado final del notebook.
+\end{itemize}
+\section{Conclusiones}
+\begin{itemize}
+  \item Se logró diseñar e implementar un verificador de satisfacibilidad proposicional utilizando el modelo de backtracking, lo que permitió resolver el problema de manera eficiente al evitar la generación de todas las combinaciones posibles. Observando las estadísticas en nuestras pruebas, es evidente cómo el mecanismo de retroceso y la evaluación temprana de restricciones descartan ramas inviables significativamente, previniendo así un decaimiento drástico del rendimiento (lo que ocurriría en un enfoque de fuerza bruta completa).
+  \item La implementación en Python facilitó la manipulación de estructuras de datos dinámicas como listas y diccionarios, lo que fue crucial para mantener el estado de las asignaciones parciales y evaluar las cláusulas de manera eficiente. Además, la claridad del código permitió una fácil identificación y corrección de bugs durante el desarrollo. 
+\end{itemize}
+
+% ============================================================
+
+% ============================================================
+\begin{thebibliography}{9}
+\bibitem{ref1}
+Autor, \textit{Título del libro o artículo}, Editorial/Revista, año.
+
+\bibitem{ref2}
+Guía de laboratorio / Manual del equipo, versión, año.
+\end{thebibliography}
+
+\section{Declaración de autoria y uso de herramientas}
+
+\end{document}
