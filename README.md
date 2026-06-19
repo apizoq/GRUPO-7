@@ -18,7 +18,7 @@ Exposición: 19 de junio de 2026
 ------
 
 ## El problema
-\begin{center}
+
 LogicCheck Lab quiere una herramienta educativa para mostrar cómo una computadora puede razonar sobre fórmulas proposicionales pequeñas. La idea no es de-
 mostrar teoremas avanzados, sino hacer visible el proceso de asignar valores de verdad,
 
